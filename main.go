@@ -11,6 +11,9 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+// GolangCI-Lint のチェック用
+const Url = "http://example.com"
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Printf("need a port number\n")
