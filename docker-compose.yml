@@ -1,0 +1,15 @@
+# dev環境（ホットリロード開発環境）用のdocker-compose.yml
+# docker compose build を実行すると、buildセクションの指定に従ってビルドされ、ビルドされたイメージにはimageで指定された名前がタグ付けされる
+# デフォルトではカレントディレクトリにあるDockerfileを使ってビルドが行われる
+# docker compose up を実行すると、まずgotodoイメージを探し、なければbuildセクションに従ってビルドする
+version: "3.9"
+services:
+  app:
+    image: gotodo
+    build:
+      args:
+        - target=dev
+    volumes:
+      - .:/app # カレントディレクトリをコンテナの/appにマウント
+    ports:
+      - "18000:80" # ローカルの18000ポートをコンテナの80ポートにマッピング
