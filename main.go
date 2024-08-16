@@ -36,9 +36,11 @@ func main() {
 func run(ctx context.Context, l net.Listener) error {
 	s := &http.Server{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, %s", r.URL.Path[1:])
+			fmt.Fprintf(w, "Hello, %s", r.URL.Path[1:])
 		}),
 	}
+
+	nonuse := "aaa"
 	
 	// errgroup.Groupは複数のゴルーチンを管理し、
 	// そのいずれかがエラーを返した場合に全てのゴルーチンをキャンセルする
