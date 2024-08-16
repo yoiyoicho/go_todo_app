@@ -9,28 +9,32 @@ import (
 	"os"
 
 	"golang.org/x/sync/errgroup"
+
+	"github.com/yoiyoicho/go_todo_app/config"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Printf("need a port number\n")
-		os.Exit(1)
-	}
-
-	p := os.Args[1]
-	l, err := net.Listen("tcp", ":"+p)
-	if err != nil {
-		log.Fatalf("failed to listen port %s: %v", p, err)
-	}
-
 	// context.Background() で空のコンテキストを生成
-	if err := run(context.Background(), l); err != nil {
+	if err := run(context.Background()); err != nil {
 		log.Printf("failed to terminate server: %v", err)
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context, l net.Listener) error {
+func run(ctx context.Context) error {
+	cfg, err := config.New()
+	if err != nil {
+		return err
+	}
+
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Port))
+	if err != nil {
+		log.Fatalf("failed to listen port %s: %v", cfg.Port, err)
+	}
+
+	url := fmt.Sprintf("http://%s", l.Addr().String())
+	log.Printf("start with: %v", url)
+
 	s := &http.Server{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "Hello, %s", r.URL.Path[1:])
@@ -61,6 +65,5 @@ func run(ctx context.Context, l net.Listener) error {
 
 	// eg.Wait() は、errgroup.Group の全てのゴルーチンの実行が完了するまで待機し
 	// 最初に発生したエラーを返す
-	err := eg.Wait()
-	return err
+	return eg.Wait()
 }

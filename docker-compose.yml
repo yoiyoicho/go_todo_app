@@ -9,7 +9,10 @@ services:
     build:
       args:
         - target=dev
+    environment:
+      TODO_ENV: dev
+      PORT: 8080
     volumes:
       - .:/app # カレントディレクトリをコンテナの/appにマウント
     ports:
-      - "18000:80" # ローカルの18000ポートをコンテナの80ポートにマッピング
+      - "18000:8080" # ローカルの18000ポートをコンテナの80ポートにマッピング
