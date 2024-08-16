@@ -11,9 +11,6 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// GolangCI-Lint のチェック用
-const Url = "http://example.com"
-
 func main() {
 	if len(os.Args) < 2 {
 		log.Printf("need a port number\n")
@@ -39,8 +36,6 @@ func run(ctx context.Context, l net.Listener) error {
 			fmt.Fprintf(w, "Hello, %s", r.URL.Path[1:])
 		}),
 	}
-
-	nonuse := "aaa"
 	
 	// errgroup.Groupは複数のゴルーチンを管理し、
 	// そのいずれかがエラーを返した場合に全てのゴルーチンをキャンセルする
