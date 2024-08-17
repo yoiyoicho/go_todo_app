@@ -7,6 +7,9 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"golang.org/x/sync/errgroup"
 
@@ -22,6 +25,10 @@ func main() {
 }
 
 func run(ctx context.Context) error {
+	ctx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
+	// run関数内の処理が完了し、エラーハンドリングやリソースの解放などの後処理が行われた後に stop() が実行される
+	defer stop()
+
 	cfg, err := config.New()
 	if err != nil {
 		return err
@@ -29,7 +36,7 @@ func run(ctx context.Context) error {
 
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Port))
 	if err != nil {
-		log.Fatalf("failed to listen port %s: %v", cfg.Port, err)
+		log.Fatalf("failed to listen port %d: %v", cfg.Port, err)
 	}
 
 	url := fmt.Sprintf("http://%s", l.Addr().String())
@@ -37,6 +44,8 @@ func run(ctx context.Context) error {
 
 	s := &http.Server{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// コマンドラインで実験するため
+			time.Sleep(5 * time.Second)
 			fmt.Fprintf(w, "Hello, %s", r.URL.Path[1:])
 		}),
 	}
