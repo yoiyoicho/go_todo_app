@@ -71,10 +71,10 @@ var (
 	// 型チェックのためのコードで、変数自身は不要なので、ブランク識別子に代入する
 	_ Beginner = (*sqlx.DB)(nil)
 	_ Preparer = (*sqlx.DB)(nil)
-	_ Queryer = (*sqlx.DB)(nil)
-	_ Queryer = (*sqlx.Tx)(nil)
-	_ Execer = (*sqlx.DB)(nil)
-	_ Execer = (*sqlx.Tx)(nil)
+	_ Queryer  = (*sqlx.DB)(nil)
+	_ Queryer  = (*sqlx.Tx)(nil)
+	_ Execer   = (*sqlx.DB)(nil)
+	_ Execer   = (*sqlx.Tx)(nil)
 )
 
 type Repository struct {
