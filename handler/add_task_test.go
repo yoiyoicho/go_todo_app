@@ -2,13 +2,14 @@ package handler
 
 import (
 	"bytes"
+	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/yoiyoicho/go_todo_app/entity"
-	"github.com/yoiyoicho/go_todo_app/store"
 	"github.com/yoiyoicho/go_todo_app/testutil"
 )
 
@@ -51,10 +52,17 @@ func TestAddTask(t *testing.T) {
 
 			// 構造体の初期化時に明示的に値を設定しないフィールドは、そのフィールドの型のゼロ値で初期化される
 			// sut.AddTask.Store.LastIDは、entity.TaskID型のゼロ値、すなわち0で初期化される
+			moq := &AddTaskServiceMock{}
+			moq.AddTaskFunc = func(
+				ctx context.Context, title string,
+			) (*entity.Task, error) {
+				if tt.want.status == http.StatusOK {
+					return &entity.Task{ID: 1}, nil
+				}
+				return nil, errors.New("error from mock")
+			}
 			sut := AddTask{
-				Store: &store.TaskStore{
-					Tasks: map[entity.TaskID]*entity.Task{},
-				},
+				Service:   moq,
 				Validator: validator.New(),
 			}
 			sut.ServeHTTP(w, r)
