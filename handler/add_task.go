@@ -57,5 +57,5 @@ func (at *AddTask) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	resp := struct {
 		ID int `json:"id"`
 	}{ID: int(id)}
-	RespondJSON(ctx, w, resp, http.StatusCreated)
+	RespondJSON(ctx, w, resp, http.StatusOK)
 }
