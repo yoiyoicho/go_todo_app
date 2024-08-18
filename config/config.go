@@ -6,8 +6,13 @@ import (
 
 type Config struct {
 	// 構造体タグ
-	Env  string `env:"ENV" envDefault:"dev"`
-	Port int    `env:"PORT" envDefault:"8080"`
+	Env        string `env:"ENV" envDefault:"dev"`
+	Port       int    `env:"PORT" envDefault:"8080"`
+	DBHost     string `env:"TODO_DB_HOST" envDefault:"127.0.0.1"`
+	DBPort     int    `env:"TODO_DB_PORT" envDefault:"3306"`
+	DBUser     string `env:"TODO_DB_USER" envDefault:"todo"`
+	DBPassword string `env:"TODO_DB_PASSWORD" envDefault:"todo"`
+	DBName     string `env:"TODO_DB_NAME" envDefault:"todo"`
 }
 
 func New() (*Config, error) {
