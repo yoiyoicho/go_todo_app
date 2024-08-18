@@ -8,7 +8,7 @@ import (
 )
 
 type Login struct {
-	Service LoginService
+	Service   LoginService
 	Validator *validator.Validate
 }
 

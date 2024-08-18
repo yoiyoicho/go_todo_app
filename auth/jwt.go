@@ -97,7 +97,7 @@ func (j *JWTer) GetToken(ctx context.Context, r *http.Request) (jwt.Token, error
 	token, err := jwt.ParseRequest(
 		r,
 		jwt.WithKey(jwa.RS256, j.PublicKey), // 署名を検証するアルゴリズムと利用する鍵の指定
-		jwt.WithValidate(false), // jwt.Validateで検証するため、ここでは検証を行わない
+		jwt.WithValidate(false),             // jwt.Validateで検証するため、ここでは検証を行わない
 	)
 	if err != nil {
 		return nil, err

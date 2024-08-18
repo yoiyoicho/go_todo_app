@@ -58,17 +58,17 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 
 	l := &handler.Login{
 		Service: &service.Login{
-			DB: db,
-			Repo: &r,
+			DB:             db,
+			Repo:           &r,
 			TokenGenerator: jwter,
 		},
 		Validator: v,
 	}
 	mux.Post("/login", l.ServeHTTP)
 
-	mux.Route("/admin", func(r chi.Router){
+	mux.Route("/admin", func(r chi.Router) {
 		r.Use(handler.AuthMiddleware(jwter), handler.AdminMiddleware)
-		r.Get("/", func(w http.ResponseWriter, r *http.Request){
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			_, _ = w.Write([]byte(`{"message": "admin only"}`))
 		})

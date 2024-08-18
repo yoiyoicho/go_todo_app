@@ -31,7 +31,7 @@ func (r *Repository) RegisterUser(
 
 func (r *Repository) GetUser(
 	ctx context.Context, db Queryer, name string,
-)(*entity.User, error) {
+) (*entity.User, error) {
 	u := &entity.User{}
 	sql := `SELECT
 		id, name, password, role, created, modified
