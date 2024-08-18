@@ -10,7 +10,7 @@ import (
 	"github.com/yoiyoicho/go_todo_app/testutil"
 )
 
-func TestKVS_Save(t *testing.T){
+func TestKVS_Save(t *testing.T) {
 	t.Parallel()
 
 	cli := testutil.OpenRedisForTest(t)
@@ -33,14 +33,14 @@ func TestKVS_Load(t *testing.T) {
 	cli := testutil.OpenRedisForTest(t)
 	sut := &KVS{Cli: cli}
 
-	t.Run("ok", func(t *testing.T){
+	t.Run("ok", func(t *testing.T) {
 		t.Parallel()
 
 		key := "TestKVS_Load_ok"
 		uid := entity.UserID(1234)
 		ctx := context.Background()
 		cli.Set(ctx, key, int64(uid), 30*time.Minute)
-		t.Cleanup(func() {cli.Del(ctx,key)})
+		t.Cleanup(func() { cli.Del(ctx, key) })
 		got, err := sut.Load(ctx, key)
 		if err != nil {
 			t.Fatalf("want no error, but got %v", err)
@@ -50,7 +50,7 @@ func TestKVS_Load(t *testing.T) {
 		}
 	})
 
-	t.Run("notFound", func(t *testing.T){
+	t.Run("notFound", func(t *testing.T) {
 		t.Parallel()
 
 		key := "TestKVS_Save_notfound"
