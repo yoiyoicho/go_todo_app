@@ -20,6 +20,7 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		_, _ = w.Write([]byte(`{"status": "ok"}`))
 	})
+
 	v := validator.New()
 	db, cleanup, err := store.New(ctx, cfg)
 	if err != nil {
@@ -27,22 +28,6 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 	}
 	clocker := clock.RealClocker{}
 	r := store.Repository{Clocker: clocker}
-	at := &handler.AddTask{
-		Service:   &service.AddTask{DB: db, Repo: &r},
-		Validator: v,
-	}
-	// Postの第2引数はhttp.HandlerFunc型の関数を受け取る
-	// なぜhttp.HandlerFunc(at.ServeHTTP)としなくてもOKなのか？
-	mux.Post("/tasks", at.ServeHTTP)
-	lt := &handler.ListTask{
-		Service: &service.ListTask{DB: db, Repo: &r},
-	}
-	mux.Get("/tasks", lt.ServeHTTP)
-	ru := &handler.RegisterUser{
-		Service:   &service.RegisterUser{DB: db, Repo: &r},
-		Validator: v,
-	}
-	mux.Post("/register", ru.ServeHTTP)
 	rcli, err := store.NewKVS(ctx, cfg)
 	if err != nil {
 		return nil, cleanup, err
@@ -51,6 +36,26 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 	if err != nil {
 		return nil, cleanup, err
 	}
+
+	at := &handler.AddTask{
+		Service:   &service.AddTask{DB: db, Repo: &r},
+		Validator: v,
+	}
+	lt := &handler.ListTask{
+		Service: &service.ListTask{DB: db, Repo: &r},
+	}
+	mux.Route("/tasks", func(r chi.Router) {
+		r.Use(handler.AuthMiddleware(jwter))
+		r.Post("/", at.ServeHTTP)
+		r.Get("/", lt.ServeHTTP)
+	})
+
+	ru := &handler.RegisterUser{
+		Service:   &service.RegisterUser{DB: db, Repo: &r},
+		Validator: v,
+	}
+	mux.Post("/register", ru.ServeHTTP)
+
 	l := &handler.Login{
 		Service: &service.Login{
 			DB: db,
@@ -60,5 +65,13 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 		Validator: v,
 	}
 	mux.Post("/login", l.ServeHTTP)
+
+	mux.Route("/admin", func(r chi.Router){
+		r.Use(handler.AuthMiddleware(jwter), handler.AdminMiddleware)
+		r.Get("/", func(w http.ResponseWriter, r *http.Request){
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			_, _ = w.Write([]byte(`{"message": "admin only"}`))
+		})
+	})
 	return mux, cleanup, nil
 }
