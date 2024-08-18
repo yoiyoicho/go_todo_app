@@ -49,6 +49,8 @@ func TestAddTask(t *testing.T) {
 				bytes.NewReader(testutil.LoadFile(t, tt.reqFile)),
 			)
 
+			// 構造体の初期化時に明示的に値を設定しないフィールドは、そのフィールドの型のゼロ値で初期化される
+			// sut.AddTask.Store.LastIDは、entity.TaskID型のゼロ値、すなわち0で初期化される
 			sut := AddTask{
 				Store: &store.TaskStore{
 					Tasks: map[entity.TaskID]*entity.Task{},
