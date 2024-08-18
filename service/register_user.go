@@ -20,9 +20,9 @@ func (ru *RegisterUser) RegisterUser(ctx context.Context, name, password, role s
 		return nil, fmt.Errorf("cannot hash password: %w", err)
 	}
 	u := &entity.User{
-		Name:  name,
+		Name:     name,
 		Password: string(pw),
-		Role: role,
+		Role:     role,
 	}
 	if err := ru.Repo.RegisterUser(ctx, ru.DB, u); err != nil {
 		return nil, fmt.Errorf("failed to register: %w", err)

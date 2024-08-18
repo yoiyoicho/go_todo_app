@@ -26,7 +26,7 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 	}
 	r := store.Repository{Clocker: clock.RealClocker{}}
 	at := &handler.AddTask{
-		Service: &service.AddTask{DB: db, Repo: &r},
+		Service:   &service.AddTask{DB: db, Repo: &r},
 		Validator: v,
 	}
 	// Postの第2引数はhttp.HandlerFunc型の関数を受け取る
@@ -37,7 +37,7 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 	}
 	mux.Get("/tasks", lt.ServeHTTP)
 	ru := &handler.RegisterUser{
-		Service: &service.RegisterUser{DB: db, Repo: &r},
+		Service:   &service.RegisterUser{DB: db, Repo: &r},
 		Validator: v,
 	}
 	mux.Post("/register", ru.ServeHTTP)
