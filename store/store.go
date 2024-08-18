@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	// Tasksフィールドに、entity.TaskIDをキー、*entity.Taskを値とするマップを割り当てる
 	Tasks = &TaskStore{Tasks: map[entity.TaskID]*entity.Task{}}
 
 	ErrNotFound = errors.New("not found")
