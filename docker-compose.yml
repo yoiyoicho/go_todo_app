@@ -12,7 +12,33 @@ services:
     environment:
       TODO_ENV: dev
       PORT: 8080
+      TODO_DB_HOST: todo-db
+      TODO_DB_PORT: 3307
+      TODO_DB_USER: todo
+      TODO_DB_PASS: todo
+      TODO_DB_NAME: todo
     volumes:
       - .:/app # カレントディレクトリをコンテナの/appにマウント
     ports:
       - "18000:8080" # ローカルの18000ポートをコンテナの8080ポートにマッピング
+  todo-db:
+    image: mysql:8.0.29
+    platform: linux/x86_64
+    container_name: todo-db
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: todo
+      MYSQL_USER: todo
+      MYSQL_PASSWORD: todo
+      MYSQL_TCP_PORT: 3307 # デフォルトの3306番は他のプロジェクトのMySQLコンテナと競合するため、3307番を使用
+    volumes:
+      # todo-db-data という名前のボリュームをコンテナの /var/lib/mysql にマウントし、データベースデータを永続化
+      - todo-db-data:/var/lib/mysql
+      # ローカルの _tools/mysql/conf.d ディレクトリをコンテナの /etc/mysql/conf.d にマウントし、MySQL設定ファイルを追加
+      - $PWD/_tools/mysql/conf.d:/etc/mysql/conf.d:cached
+    ports:
+      - "33307:3307"
+# todo-db-data という名前付きボリュームを定義
+# 名前付きボリュームは複数のコンテナ間で共有できる
+volumes:
+  todo-db-data:
