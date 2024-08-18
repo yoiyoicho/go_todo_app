@@ -53,7 +53,6 @@ func TestJWTer_GenerateToken(t *testing.T) {
 	if len(got) == 0 {
 		t.Errorf("token is empty")
 	}
-
 }
 
 func TestJWTer_GetJWT(t *testing.T) {
