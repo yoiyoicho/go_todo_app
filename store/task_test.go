@@ -102,6 +102,8 @@ func TestRepository_AddTask(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = db.Close() })
+	// AddTask内でモックのデータベースに対してExpectExecで設定したSQL文を実行すると、
+	// モックのデータベースはWillReturnResultで設定した結果を返す
 	mock.ExpectExec(
 		// エスケープが必要
 		`INSERT INTO task \(title, status, created, modified\) VALUES \(\?, \?, \?, \?\)`,
@@ -110,6 +112,7 @@ func TestRepository_AddTask(t *testing.T) {
 
 	xdb := sqlx.NewDb(db, "mysql")
 	r := &Repository{Clocker: c}
+	// xdbを通じて間接的にmockの動作が反映される
 	if err := r.AddTask(ctx, xdb, okTask); err != nil {
 		t.Errorf("want no error, but got %v", err)
 	}
