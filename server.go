@@ -14,13 +14,13 @@ import (
 
 type Server struct {
 	srv *http.Server
-	l  net.Listener
+	l   net.Listener
 }
 
 func NewServer(l net.Listener, mux http.Handler) *Server {
 	return &Server{
 		srv: &http.Server{Handler: mux},
-		l: l,
+		l:   l,
 	}
 }
 
@@ -28,7 +28,7 @@ func (s *Server) Run(ctx context.Context) error {
 	ctx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
 	// run関数内の処理が完了し、エラーハンドリングやリソースの解放などの後処理が行われた後に stop() が実行される
 	defer stop()
-	
+
 	// errgroup.Groupは複数のゴルーチンを管理し、
 	// そのいずれかがエラーを返した場合に全てのゴルーチンをキャンセルする
 	eg, ctx := errgroup.WithContext(ctx)
@@ -37,8 +37,8 @@ func (s *Server) Run(ctx context.Context) error {
 		// クロージャの特性により、この無名関数は s への参照を保持し、
 		// 実行時にその値にアクセスすることができる
 		if err := s.srv.Serve(s.l); err != nil &&
-		// http.ErrServerClosed は http.Server.Shutdown() が正常に終了したことを示すので異常ではない
-		err != http.ErrServerClosed {
+			// http.ErrServerClosed は http.Server.Shutdown() が正常に終了したことを示すので異常ではない
+			err != http.ErrServerClosed {
 			log.Printf("failed to close: %+v", err)
 			return err
 		}
